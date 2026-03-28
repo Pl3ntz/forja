@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { authClient } from '@/lib/auth-client.js'
 import { useAuth } from '../hooks/useAuth.js'
+import GoogleSignInButton from './GoogleSignInButton.js'
 
 export default function RegisterForm() {
   const [name, setName] = useState('')
@@ -115,6 +116,14 @@ export default function RegisterForm() {
           </span>
         ) : 'Criar conta'}
       </button>
+
+      <div className="flex items-center gap-3 my-5">
+        <div className="flex-1 h-px bg-forge-600" />
+        <span className="text-text-muted text-xs">ou</span>
+        <div className="flex-1 h-px bg-forge-600" />
+      </div>
+
+      <GoogleSignInButton />
 
       <p className="mt-4 text-center text-sm text-text-secondary">
         Já tem uma conta?{' '}
