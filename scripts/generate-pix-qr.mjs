@@ -9,7 +9,7 @@ import { writeFileSync } from 'fs'
 
 // ── Configuração ────────────────────────────────────
 const PIX_KEY = '22890078-d19c-4a4f-92f1-d9fc9233c2f0'
-const MERCHANT_NAME = 'Compiler CV'
+const MERCHANT_NAME = 'Forja'
 const MERCHANT_CITY = 'SAO PAULO'
 // ────────────────────────────────────────────────────
 

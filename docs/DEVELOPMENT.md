@@ -56,6 +56,8 @@ PDF_CONCURRENCY=2
 ADMIN_EMAIL=admin@example.com
 ADMIN_SEED_PASSWORD=localdevpassword
 GROQ_API_KEY=            # Optional: get from https://console.groq.com
+GOOGLE_CLIENT_ID=        # Optional: Google OAuth
+GOOGLE_CLIENT_SECRET=    # Optional: Google OAuth
 ```
 
 ### Database Setup
@@ -381,4 +383,6 @@ SEED_DEMO=true
 DEMO_EMAIL=demo@cvbuilder.local
 DEMO_PASSWORD=demo12341234
 GROQ_API_KEY=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 ```

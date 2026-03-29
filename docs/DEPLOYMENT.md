@@ -53,6 +53,10 @@ SEED_DEMO=false
 
 # AI (optional)
 GROQ_API_KEY=<your-groq-api-key>
+
+# Google OAuth (optional — get from https://console.cloud.google.com/apis/credentials)
+GOOGLE_CLIENT_ID=<your-google-client-id>
+GOOGLE_CLIENT_SECRET=<your-google-client-secret>
 ```
 
 **Important:** Generate strong, unique passwords:

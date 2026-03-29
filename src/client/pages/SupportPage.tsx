@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth.js'
 import Brand from '../components/Brand.js'
 
-const PIX_COPIA_COLA = '00020126580014br.gov.bcb.pix013622890078-d19c-4a4f-92f1-d9fc9233c2f05204000053039865802BR5911Forja6009SAO PAULO62070503***63044D67'
+const PIX_COPIA_COLA = '00020126580014br.gov.bcb.pix013622890078-d19c-4a4f-92f1-d9fc9233c2f05204000053039865802BR5905Forja6009SAO PAULO62070503***630438FE'
 
 export default function SupportPage() {
   const { user } = useAuth()

@@ -185,6 +185,8 @@ bun run dev:server       # Hono server on port 4321
 | `DEMO_EMAIL` | No | `demo@cvbuilder.local` | Demo user email |
 | `DEMO_PASSWORD` | No | `demo12341234` | Demo user password |
 | `GROQ_API_KEY` | No | — | Groq API key for AI features. Get one free at [Groq Console](https://console.groq.com) |
+| `GOOGLE_CLIENT_ID` | No | — | Google OAuth client ID from [Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| `GOOGLE_CLIENT_SECRET` | No | — | Google OAuth client secret |
 | `HOST` | No | `0.0.0.0` | Server bind address |
 | `PORT` | No | `4321` | Server port |
 
@@ -198,6 +200,8 @@ PDF_CONCURRENCY=2
 ADMIN_EMAIL=admin@example.com
 ADMIN_SEED_PASSWORD=change-me-on-first-deploy
 GROQ_API_KEY=your-groq-api-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 ```
 
 ---

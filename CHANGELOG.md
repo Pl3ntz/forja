@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Full migration from Astro/Preact to React 19 + React Router 7
 - Hono backend replacing Astro API routes
 - Custom CV sections with drag-and-drop reordering
-- Clone and translate CV to another language via Gemini AI
+- Clone and translate CV to another language via Groq AI
 - ATS score analysis with per-section feedback and suggestions
 - PDF import — upload existing resume and auto-fill all fields
 - In-memory ATS score cache (5min TTL) for faster repeated analysis
@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - Frontend: React 19 SPA with Tailwind CSS 4, Framer Motion 12
 - Backend: Hono 4.7 on Bun runtime
-- Gemini client optimized: compact JSON, stripped unused fields, 30s timeout, thinking budget cap, concise prompts
+- Groq client optimized: compact JSON, stripped unused fields, 30s timeout, concise prompts
 - Editor auto-save debounce increased to 1.5s
 - Preview debounce at 300ms
 
@@ -34,7 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.1.0] - 2025-01-15
 
 ### Added
-- Initial CV Builder SaaS MVP
+- Initial Forja MVP
 - Split-pane editor with real-time HTML preview
 - LaTeX PDF generation via Tectonic (XeTeX)
 - Jake Gutierrez resume template
