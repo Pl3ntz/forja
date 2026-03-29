@@ -1,4 +1,4 @@
-# Compiler CV
+# Forja
 
 A modern open-source platform for building, managing, and generating professional CVs/resumes with a real-time split-pane editor, LaTeX-powered PDF generation, AI-powered ATS scoring, and multi-language support.
 
@@ -10,7 +10,7 @@ A modern open-source platform for building, managing, and generating professiona
 [![Bun](https://img.shields.io/badge/Bun-1.x-black)](https://bun.sh)
 [![Better Auth](https://img.shields.io/badge/Better_Auth-1.4-green)](https://betterauth.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![CI](https://github.com/Pl3ntz/compiler-cv/actions/workflows/ci.yml/badge.svg)](https://github.com/Pl3ntz/compiler-cv/actions/workflows/ci.yml)
+[![CI](https://github.com/Pl3ntz/forja/actions/workflows/ci.yml/badge.svg)](https://github.com/Pl3ntz/forja/actions/workflows/ci.yml)
 
 > **Complete documentation:** [Architecture](./docs/ARCHITECTURE.md) | [API Reference](./docs/API.md) | [AI Features](./docs/AI.md) | [Database](./docs/DATABASE.md) | [Deployment](./docs/DEPLOYMENT.md) | [Development](./docs/DEVELOPMENT.md) | [Contributing](./docs/CONTRIBUTING.md)
 
@@ -122,8 +122,8 @@ A modern open-source platform for building, managing, and generating professiona
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Pl3ntz/compiler-cv.git
-cd compiler-cv
+git clone https://github.com/Pl3ntz/forja.git
+cd forja
 
 # 2. Configure environment variables
 cp .env.example .env
@@ -149,8 +149,8 @@ The Docker entrypoint automatically:
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/Pl3ntz/compiler-cv.git
-cd compiler-cv
+git clone https://github.com/Pl3ntz/forja.git
+cd forja
 bun install
 
 # 2. Configure environment
@@ -205,7 +205,7 @@ GROQ_API_KEY=your-groq-api-key
 ## Project Structure
 
 ```
-compiler-cv/
+forja/
 ├── src/
 │   ├── client/                    # React frontend (SPA)
 │   │   ├── pages/                 # Page components
@@ -729,9 +729,9 @@ The `docker-compose.yml` includes Traefik labels for automatic HTTPS:
 ```yaml
 labels:
   - "traefik.enable=true"
-  - "traefik.http.routers.compiler-cv.rule=Host(`your-domain.com`)"
-  - "traefik.http.routers.compiler-cv.entrypoints=https"
-  - "traefik.http.routers.compiler-cv.tls.certresolver=letsencrypt"
+  - "traefik.http.routers.forja.rule=Host(`your-domain.com`)"
+  - "traefik.http.routers.forja.entrypoints=https"
+  - "traefik.http.routers.forja.tls.certresolver=letsencrypt"
 ```
 
 ### Health Checks

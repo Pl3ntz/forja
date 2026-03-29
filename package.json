@@ -1,5 +1,5 @@
 {
-  "name": "compiler-cv",
+  "name": "forja",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -11,11 +11,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Pl3ntz/compiler-cv.git"
+    "url": "https://github.com/Pl3ntz/forja.git"
   },
-  "homepage": "https://github.com/Pl3ntz/compiler-cv",
+  "homepage": "https://github.com/Pl3ntz/forja",
   "bugs": {
-    "url": "https://github.com/Pl3ntz/compiler-cv/issues"
+    "url": "https://github.com/Pl3ntz/forja/issues"
   },
   "keywords": [
     "cv",

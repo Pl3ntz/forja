@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth.js'
 import Brand from '../components/Brand.js'
 
-const PIX_COPIA_COLA = '00020126580014br.gov.bcb.pix013622890078-d19c-4a4f-92f1-d9fc9233c2f05204000053039865802BR5911Compiler CV6009SAO PAULO62070503***63044D67'
+const PIX_COPIA_COLA = '00020126580014br.gov.bcb.pix013622890078-d19c-4a4f-92f1-d9fc9233c2f05204000053039865802BR5911Forja6009SAO PAULO62070503***63044D67'
 
 export default function SupportPage() {
   const { user } = useAuth()
@@ -69,14 +69,14 @@ export default function SupportPage() {
         >
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-5 leading-tight">
             <span className="bg-gradient-to-r from-text-primary via-text-primary to-text-secondary bg-clip-text text-transparent">
-              Ajude a manter o Compiler CV{' '}
+              Ajude a manter o Forja{' '}
             </span>
             <span className="bg-gradient-to-r from-ember-400 to-molten-400 bg-clip-text text-transparent">
               gratuito
             </span>
           </h1>
           <p className="text-base sm:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
-            O Compiler CV e um projeto open-source e gratuito. Sua contribuicao ajuda a manter os servidores, a IA e o desenvolvimento ativo.
+            O Forja e um projeto open-source e gratuito. Sua contribuicao ajuda a manter os servidores, a IA e o desenvolvimento ativo.
           </p>
         </motion.div>
       </header>
@@ -175,7 +175,7 @@ export default function SupportPage() {
         >
           Prefere contribuir com codigo?{' '}
           <a
-            href="https://github.com/vitor-plentz/compiler-cv"
+            href="https://github.com/Pl3ntz/forja"
             target="_blank"
             rel="noopener noreferrer"
             className="text-ember-400 hover:text-ember-300 transition-colors"

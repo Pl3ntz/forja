@@ -1,6 +1,6 @@
 # AI Features Documentation
 
-Compiler CV integrates with Groq (Llama 3.3 70B) to provide three AI-powered features: PDF parsing, ATS scoring, and CV translation.
+Forja integrates with Groq (Llama 3.3 70B) to provide three AI-powered features: PDF parsing, ATS scoring, and CV translation.
 
 All AI logic is centralized in `src/lib/ai-client.ts`.
 

@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to Compiler CV!
+Thank you for your interest in contributing to Forja!
 
 Please see our full contributing guide at **[docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)** for:
 

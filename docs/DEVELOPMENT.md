@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide covers everything you need to set up a local development environment and contribute to Compiler CV.
+This guide covers everything you need to set up a local development environment and contribute to Forja.
 
 ---
 
@@ -36,8 +36,8 @@ curl -fsSL https://github.com/tectonic-typesetting/tectonic/releases/download/te
 
 ```bash
 # Clone the repository
-git clone https://github.com/Pl3ntz/compiler-cv.git
-cd compiler-cv
+git clone https://github.com/Pl3ntz/forja.git
+cd forja
 
 # Install dependencies
 bun install

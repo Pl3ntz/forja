@@ -1,13 +1,13 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: compiler-cv-postgres
+    container_name: forja-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-cvbuilder}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env file}
       POSTGRES_DB: ${POSTGRES_DB:-cvbuilder}
     volumes:
-      - compiler_cv_pgdata:/var/lib/postgresql/data
+      - forja_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U cvbuilder -d cvbuilder"]
       interval: 10s
@@ -24,21 +24,21 @@ services:
           memory: 128M
     restart: unless-stopped
     networks:
-      - compiler-cv-internal
+      - forja-internal
 
   app:
     build:
       context: .
       target: production
-    container_name: compiler-cv-app
+    container_name: forja-app
     env_file:
       - .env
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-cvbuilder}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-cvbuilder}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-https://compiler.cv.vitorplentz.com.br}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-https://forja.vitorplentz.com.br}
       PDF_CONCURRENCY: ${PDF_CONCURRENCY:-2}
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@compiler.com}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@forja.com}
       ADMIN_SEED_PASSWORD: ${ADMIN_SEED_PASSWORD}
       SEED_DEMO: ${SEED_DEMO:-false}
       GROQ_API_KEY: ${GROQ_API_KEY:-}
@@ -61,21 +61,21 @@ services:
           memory: 256M
     restart: unless-stopped
     networks:
-      - compiler-cv-internal
+      - forja-internal
       - easypanel
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=easypanel"
-      - "traefik.http.routers.compiler-cv.rule=Host(`compiler.cv.vitorplentz.com.br`)"
-      - "traefik.http.routers.compiler-cv.entrypoints=https"
-      - "traefik.http.routers.compiler-cv.tls.certresolver=letsencrypt"
-      - "traefik.http.services.compiler-cv.loadbalancer.server.port=4321"
+      - "traefik.http.routers.forja.rule=Host(`forja.vitorplentz.com.br`)"
+      - "traefik.http.routers.forja.entrypoints=https"
+      - "traefik.http.routers.forja.tls.certresolver=letsencrypt"
+      - "traefik.http.services.forja.loadbalancer.server.port=4321"
 
 networks:
-  compiler-cv-internal:
+  forja-internal:
     driver: bridge
   easypanel:
     external: true
 
 volumes:
-  compiler_cv_pgdata:
+  forja_pgdata:

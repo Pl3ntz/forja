@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide covers deploying Compiler CV to production environments.
+This guide covers deploying Forja to production environments.
 
 ---
 
@@ -20,8 +20,8 @@ The simplest production deployment uses Docker Compose.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Pl3ntz/compiler-cv.git
-cd compiler-cv
+git clone https://github.com/Pl3ntz/forja.git
+cd forja
 
 # Create production environment file
 cp .env.example .env
@@ -106,10 +106,10 @@ The `docker-compose.yml` includes Traefik labels for automatic HTTPS:
 labels:
   - "traefik.enable=true"
   - "traefik.docker.network=easypanel"
-  - "traefik.http.routers.compiler-cv.rule=Host(`your-domain.com`)"
-  - "traefik.http.routers.compiler-cv.entrypoints=https"
-  - "traefik.http.routers.compiler-cv.tls.certresolver=letsencrypt"
-  - "traefik.http.services.compiler-cv.loadbalancer.server.port=4321"
+  - "traefik.http.routers.forja.rule=Host(`your-domain.com`)"
+  - "traefik.http.routers.forja.entrypoints=https"
+  - "traefik.http.routers.forja.tls.certresolver=letsencrypt"
+  - "traefik.http.services.forja.loadbalancer.server.port=4321"
 ```
 
 **Requirements:**
@@ -206,7 +206,7 @@ Add a cron job:
 
 ```bash
 # Daily backup at 2 AM
-0 2 * * * cd /path/to/compiler-cv && docker compose exec -T db pg_dump -U cvbuilder cvbuilder | gzip > /backups/cv_$(date +\%Y\%m\%d).sql.gz
+0 2 * * * cd /path/to/forja && docker compose exec -T db pg_dump -U cvbuilder cvbuilder | gzip > /backups/cv_$(date +\%Y\%m\%d).sql.gz
 ```
 
 ---
@@ -254,7 +254,7 @@ curl -sf http://localhost:4321/api/health && echo "OK" || echo "DOWN"
 
 ```bash
 # Container stats
-docker stats compiler-cv-app compiler-cv-postgres
+docker stats forja-app forja-postgres
 ```
 
 ---

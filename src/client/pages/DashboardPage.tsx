@@ -289,7 +289,7 @@ export default function DashboardPage() {
 
       <div className="bg-forge-800 border border-forge-600 rounded-xl p-4 mb-4 flex items-center justify-between">
         <div className="flex-1 min-w-0">
-          <span className="text-sm font-medium text-text-primary">Apoie o Compiler CV</span>
+          <span className="text-sm font-medium text-text-primary">Apoie o Forja</span>
           <span className="text-sm text-text-secondary ml-2">O projeto e open-source e gratuito.</span>
         </div>
         <Link

@@ -1,6 +1,6 @@
 # Database Documentation
 
-Compiler CV uses PostgreSQL 16 as its primary database, accessed through Drizzle ORM for type-safe queries.
+Forja uses PostgreSQL 16 as its primary database, accessed through Drizzle ORM for type-safe queries.
 
 ---
 

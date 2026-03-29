@@ -61,7 +61,7 @@ export default function FeedbackCard({ variant, onClose }: Props) {
       <div className={`bg-forge-800 border border-forge-600 rounded-xl p-6 ${variant === 'modal' ? 'max-w-md w-full mx-auto' : ''}`}>
         <div className="text-center">
           <div className="text-2xl mb-2">Obrigado!</div>
-          <p className="text-sm text-text-secondary">Seu feedback nos ajuda a melhorar o Compiler CV.</p>
+          <p className="text-sm text-text-secondary">Seu feedback nos ajuda a melhorar o Forja.</p>
           {variant === 'modal' && onClose && (
             <button
               type="button"

@@ -1,6 +1,6 @@
-# Contributing to Compiler CV
+# Contributing to Forja
 
-Thank you for your interest in contributing to Compiler CV! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing to Forja! This document provides guidelines for contributing to the project.
 
 ---
 
@@ -9,8 +9,8 @@ Thank you for your interest in contributing to Compiler CV! This document provid
 1. Fork the repository on GitHub
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/compiler-cv.git
-   cd compiler-cv
+   git clone https://github.com/YOUR-USERNAME/forja.git
+   cd forja
    ```
 3. Set up your development environment — see [DEVELOPMENT.md](./DEVELOPMENT.md)
 4. Create a feature branch:
@@ -203,4 +203,4 @@ If you have questions about contributing, open an issue on GitHub and tag it wit
 
 ---
 
-Thank you for helping make Compiler CV better!
+Thank you for helping make Forja better!

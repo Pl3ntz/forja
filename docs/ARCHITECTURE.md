@@ -1,12 +1,12 @@
 # Architecture
 
-This document describes the system architecture of Compiler CV in detail.
+This document describes the system architecture of Forja in detail.
 
 ---
 
 ## Overview
 
-Compiler CV is a full-stack web application built as a single deployable Docker container (plus PostgreSQL). The frontend is a React SPA served as static files, and the backend is a Hono HTTP server running on the Bun runtime.
+Forja is a full-stack web application built as a single deployable Docker container (plus PostgreSQL). The frontend is a React SPA served as static files, and the backend is a Hono HTTP server running on the Bun runtime.
 
 ```
 Browser (React SPA)

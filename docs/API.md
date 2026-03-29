@@ -1,6 +1,6 @@
 # API Reference
 
-Complete API documentation for Compiler CV. All endpoints return JSON unless otherwise noted.
+Complete API documentation for Forja. All endpoints return JSON unless otherwise noted.
 
 ---
 

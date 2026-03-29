@@ -9,7 +9,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Compiler CV, please report it responsibly.
+If you discover a security vulnerability in Forja, please report it responsibly.
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
