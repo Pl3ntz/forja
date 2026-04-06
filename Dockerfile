@@ -48,8 +48,8 @@ COPY --from=build /app/drizzle.config.ts ./
 COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
-RUN groupadd --system app && useradd --system --gid app --no-create-home app && \
-    chown -R app:app /app
+RUN groupadd --system app && useradd --system --gid app --create-home app && \
+    chown -R app:app /app /home/app
 USER app
 
 ENV HOST=0.0.0.0
