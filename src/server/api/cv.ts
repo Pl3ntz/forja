@@ -25,6 +25,21 @@ import { resolve } from 'node:path'
 import { parse as parseYaml } from 'yaml'
 import type { CvData } from '../../types/cv.js'
 
+function sanitizeNameForFilename(fullName: string): string {
+  return fullName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .split(/\s+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join('_')
+}
+
+function buildPdfFilename(name: string): string {
+  const sanitized = sanitizeNameForFilename(name)
+  return `${sanitized}_Resume.pdf`
+}
+
 const app = new Hono()
 
 // GET / — list user CVs
@@ -385,15 +400,19 @@ app.post('/:cvId/pdf', async (c) => {
   const userId = c.get('user').id
 
   try {
-    // Verify ownership first
+    // Verify ownership and get name for filename
     const [cvOwnership] = await db
-      .select({ id: cvs.id })
+      .select({ id: cvs.id, name: cvs.name })
       .from(cvs)
       .where(and(eq(cvs.id, cvId), eq(cvs.userId, userId)))
       .limit(1)
     if (!cvOwnership) {
       return c.json({ error: 'CV não encontrado' }, 404)
     }
+
+    const pdfFilename = cvOwnership.name
+      ? buildPdfFilename(cvOwnership.name)
+      : 'Resume.pdf'
 
     // Check for custom LaTeX in request body
     let customLatex: string | undefined
@@ -411,7 +430,7 @@ app.post('/:cvId/pdf', async (c) => {
       return new Response(pdfBuffer, {
         headers: {
           'Content-Type': 'application/pdf',
-          'Content-Disposition': 'attachment; filename="curriculo.pdf"',
+          'Content-Disposition': `attachment; filename="${pdfFilename}"`,
         },
       })
     }
@@ -428,7 +447,7 @@ app.post('/:cvId/pdf', async (c) => {
     return new Response(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="curriculo-${locale}.pdf"`,
+        'Content-Disposition': `attachment; filename="${pdfFilename}"`,
       },
     })
   } catch (error) {
