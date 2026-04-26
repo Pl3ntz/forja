@@ -15,3 +15,13 @@ vitor-plentz*.pdf
 
 # Claude Code local settings
 .claude/
+
+# Build/test artifacts
+.astro/
+.playwright-mcp/
+guide-img/
+
+# Scratch research / scraped content
+linkedin-*.png
+linkedin-*.txt
+linkedin-*.md
