@@ -6,6 +6,8 @@ export const en: Record<string, Record<string, string>> = {
     email: 'Email',
     linkedin: 'LinkedIn',
     github: 'GitHub',
+    title: 'Title (subtitle)',
+    titleHint: "Used by Modern template — multi-role display like 'Data Engineer | Cloud Specialist'",
   },
   summary: {
     sectionTitle: 'Section Title',
@@ -30,6 +32,10 @@ export const en: Record<string, Record<string, string>> = {
     highlights: 'Highlights',
     addHighlight: 'Add Highlight',
     addItem: 'Add Experience',
+    intro: 'Intro paragraph',
+    introHint: 'Used by Modern template',
+    skills: 'Skills line',
+    skillsHint: 'Used by Modern template',
   },
   projects: {
     sectionTitle: 'Section Title',
@@ -51,5 +57,16 @@ export const en: Record<string, Record<string, string>> = {
     languageName: 'Language',
     level: 'Level',
     addItem: 'Add Language',
+  },
+  certifications: {
+    sectionTitle: 'Section Title',
+    name: 'Certification Name',
+    issuer: 'Issuer (optional)',
+    year: 'Year (optional)',
+    addItem: 'Add Certification',
+    empty: 'No certifications yet — add one to begin.',
+  },
+  editor: {
+    template: 'Template',
   },
 }

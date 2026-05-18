@@ -12,6 +12,7 @@ export interface CvHeader {
   readonly email: string
   readonly linkedin: string
   readonly github: string
+  readonly title: string
 }
 
 export interface CvSummary {
@@ -38,6 +39,8 @@ export interface ExperienceItem {
   readonly date: string
   readonly location: string
   readonly highlights: readonly string[]
+  readonly intro: string
+  readonly skills: string
 }
 
 export interface CvExperience {
@@ -87,6 +90,17 @@ export interface CustomSection {
   readonly items: readonly CustomSectionItem[]
 }
 
+export interface CertificationItem {
+  readonly name: string
+  readonly issuer?: string
+  readonly year?: string
+}
+
+export interface CvCertifications {
+  readonly title: string
+  readonly items: readonly CertificationItem[]
+}
+
 export interface CvData {
   readonly meta: CvMeta
   readonly header: CvHeader
@@ -96,5 +110,6 @@ export interface CvData {
   readonly projects: CvProjects
   readonly skills: CvSkills
   readonly languages: CvLanguages
+  readonly certifications?: CvCertifications
   readonly customSections?: readonly CustomSection[]
 }

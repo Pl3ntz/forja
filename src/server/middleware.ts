@@ -14,6 +14,7 @@ const RATE_LIMITS: ReadonlyArray<{
   { prefix: '/api/auth/sign-in', methods: ['POST'], windowMs: 60_000, maxRequests: 10 },
   { prefix: '/api/auth/sign-up', methods: ['POST'], windowMs: 60_000, maxRequests: 5 },
   { prefix: '/api/cv/', methods: ['POST'], windowMs: 60_000, maxRequests: 20 },
+  { prefix: '/api/cover-letter/', methods: ['POST'], windowMs: 60_000, maxRequests: 20 },
 ]
 
 export async function rateLimitMiddleware(c: Context, next: Next) {

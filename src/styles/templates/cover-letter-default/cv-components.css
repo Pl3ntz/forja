@@ -1,0 +1,103 @@
+.cv-letter__header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+
+.cv-letter__header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+
+.cv-letter__header .subtitle {
+  font-style: italic;
+  font-size: 0.95rem;
+  margin-bottom: 0.15rem;
+}
+
+.cv-letter__header .contacts {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.1rem 0.6rem;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+.cv-letter__header .contacts a {
+  text-decoration: underline;
+}
+
+.cv-letter__title-bar {
+  text-align: center;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.cv-letter__title-bar h2 {
+  font-size: 1.1rem;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+}
+
+.cv-letter__date {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.cv-letter__recipient {
+  margin-bottom: 0.5rem;
+}
+
+.cv-letter__recipient p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.cv-letter__salutation {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.cv-letter__body {
+  margin-bottom: 0.5rem;
+}
+
+.cv-letter__paragraph {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+  text-align: justify;
+}
+
+.cv-letter__paragraph-label {
+  font-weight: 700;
+}
+
+.cv-letter__closing {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.cv-letter__closing .phrase {
+  margin-bottom: 1.2rem;
+}
+
+.cv-letter__signature {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .cv-letter__header .contacts {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+  }
+}
+
+@media print {
+  .cv-letter__header {
+    border-bottom-color: #000;
+  }
+}

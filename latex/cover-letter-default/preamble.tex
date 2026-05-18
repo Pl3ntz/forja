@@ -1,0 +1,77 @@
+%-------------------------
+% Default Cover Letter
+% License : MIT
+% Adapted for tectonic (XeTeX)
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{fontspec}
+\usepackage{parskip}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\setlength{\tabcolsep}{0in}
+
+%-------------------------
+% Cover letter commands
+
+% Sender block header at top of document
+% Usage: \letterHeader{name}{title}{location}{phone}{email}{linkedin}
+\newcommand{\letterHeader}[6]{%
+  \begin{center}
+    \textbf{\Large #1}\\[2pt]
+    \ifx&#2&\else\textit{#2}\\[2pt]\fi
+    \small #3 \quad #4 \quad #5 \quad #6
+  \end{center}
+  \vspace{6pt}
+  \hrule
+  \vspace{10pt}
+}
+
+% Salutation line
+% Usage: \letterSalutation{Dear Hiring Manager}
+\newcommand{\letterSalutation}[1]{%
+  \noindent #1, \par \vspace{6pt}
+}
+
+% Body paragraph with optional bold label
+% Usage: \letterBodyParagraph{label}{content}
+% If label is empty, renders content only. If non-empty, renders \textbf{label:} content.
+\newcommand{\letterBodyParagraph}[2]{%
+  \ifx&#1&%
+    \noindent #2 \par \vspace{6pt}%
+  \else%
+    \noindent \textbf{#1:} #2 \par \vspace{6pt}%
+  \fi%
+}
+
+% Closing block: phrase on one line, signature on next
+% Usage: \letterClosing{Sincerely,}{John Doe}
+\newcommand{\letterClosing}[2]{%
+  \vspace{10pt}
+  \noindent #1 \par \vspace{20pt}
+  \noindent #2
+}

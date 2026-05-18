@@ -14,6 +14,8 @@ export const cvExperienceItems = pgTable(
     date: text('date').notNull().default(''),
     location: text('location').notNull().default(''),
     highlights: text('highlights').array().notNull().default([]),
+    intro: text('intro').notNull().default(''),
+    skills: text('skills').notNull().default(''),
   },
   (t) => [index('cv_experience_items_cv_id_idx').on(t.cvId)],
 )

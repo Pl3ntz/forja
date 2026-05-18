@@ -11,6 +11,7 @@ export const cvs = pgTable(
     locale: text('locale').notNull(),
     templateId: text('template_id').notNull().default('jake'),
     title: text('title').notNull().default(''),
+    headerTitle: text('header_title').notNull().default(''),
     pdfFilename: text('pdf_filename'),
     name: text('name').notNull().default(''),
     location: text('location').notNull().default(''),

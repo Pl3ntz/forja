@@ -1,10 +1,11 @@
 import type { Locale } from './locales.js'
 import type { CvInput } from './zod-schemas/cv.js'
+import { DEFAULT_CV_TEMPLATE_ID } from './templates.js'
 
 const DEFAULTS: Record<Locale, CvInput> = {
   pt: {
-    templateId: 'jake',
-    sectionOrder: ['summary', 'education', 'experience', 'projects', 'skills', 'languages'],
+    templateId: DEFAULT_CV_TEMPLATE_ID,
+    sectionOrder: ['summary', 'education', 'experience', 'projects', 'skills', 'languages', 'certifications'],
     header: {
       name: '',
       location: '',
@@ -12,6 +13,7 @@ const DEFAULTS: Record<Locale, CvInput> = {
       email: '',
       linkedin: '',
       github: '',
+      title: '',
     },
     summary: {
       title: 'Resumo Profissional',
@@ -37,10 +39,14 @@ const DEFAULTS: Record<Locale, CvInput> = {
       title: 'Idiomas',
       items: [],
     },
+    certifications: {
+      title: 'Licencas e Certificacoes',
+      items: [],
+    },
   },
   en: {
-    templateId: 'jake',
-    sectionOrder: ['summary', 'education', 'experience', 'projects', 'skills', 'languages'],
+    templateId: DEFAULT_CV_TEMPLATE_ID,
+    sectionOrder: ['summary', 'education', 'experience', 'projects', 'skills', 'languages', 'certifications'],
     header: {
       name: '',
       location: '',
@@ -48,6 +54,7 @@ const DEFAULTS: Record<Locale, CvInput> = {
       email: '',
       linkedin: '',
       github: '',
+      title: '',
     },
     summary: {
       title: 'Professional Summary',
@@ -71,6 +78,10 @@ const DEFAULTS: Record<Locale, CvInput> = {
     },
     languages: {
       title: 'Languages',
+      items: [],
+    },
+    certifications: {
+      title: 'Certifications',
       items: [],
     },
   },

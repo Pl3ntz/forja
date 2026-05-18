@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { TEMPLATE_IDS } from '../templates.js'
+import { CV_TEMPLATE_IDS, DEFAULT_CV_TEMPLATE_ID } from '../templates.js'
 
 const text = z.string().max(500)
 const longText = z.string().max(5000)
@@ -19,6 +19,8 @@ export const experienceItemSchema = z.object({
   date: text,
   location: text,
   highlights: z.array(highlight).max(20),
+  intro: z.string().max(2000).optional().default(''),
+  skills: z.string().max(500).optional().default(''),
 })
 
 export const projectItemSchema = z.object({
@@ -48,8 +50,19 @@ export const customSectionSchema = z.object({
   })).max(30),
 })
 
+export const certificationItemSchema = z.object({
+  name: z.string().max(500),
+  issuer: z.string().max(500).optional(),
+  year: z.string().max(50).optional(),
+})
+
+export const certificationsSchema = z.object({
+  title: text,
+  items: z.array(certificationItemSchema).max(20),
+})
+
 export const cvInputSchema = z.object({
-  templateId: z.enum(TEMPLATE_IDS).optional().default('jake'),
+  templateId: z.enum(CV_TEMPLATE_IDS).optional().default(DEFAULT_CV_TEMPLATE_ID),
   locale: z.enum(['pt', 'en']).optional(),
   sectionOrder: z.array(z.string().max(50)).max(16).optional().refine(
     (arr) => !arr || new Set(arr).size === arr.length,
@@ -64,6 +77,7 @@ export const cvInputSchema = z.object({
     email: text,
     linkedin: text,
     github: text,
+    title: z.string().max(200).optional().default(''),
   }),
   summary: z.object({
     title: text,
@@ -89,6 +103,7 @@ export const cvInputSchema = z.object({
     title: text,
     items: z.array(languageItemSchema).max(20),
   }),
+  certifications: certificationsSchema.optional(),
 })
 
 export type CvInput = z.infer<typeof cvInputSchema>
@@ -96,5 +111,5 @@ export type CvInput = z.infer<typeof cvInputSchema>
 export const cvCreateSchema = z.object({
   title: z.string().max(200).optional().default(''),
   locale: z.enum(['pt', 'en']),
-  templateId: z.enum(TEMPLATE_IDS).optional().default('jake'),
+  templateId: z.enum(CV_TEMPLATE_IDS).optional().default(DEFAULT_CV_TEMPLATE_ID),
 })

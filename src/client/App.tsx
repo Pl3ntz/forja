@@ -11,6 +11,7 @@ import RegisterPage from './pages/RegisterPage.js'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.js'
 import DashboardPage from './pages/DashboardPage.js'
 import EditorPage from './pages/EditorPage.js'
+import CoverLetterEditorPage from './pages/CoverLetterEditorPage.js'
 import SettingsPage from './pages/SettingsPage.js'
 import AdminDashboardPage from './pages/AdminDashboardPage.js'
 import AdminUsersPage from './pages/AdminUsersPage.js'
@@ -95,6 +96,7 @@ const router = createBrowserRouter([
         element: <EditorLayout />,
         children: [
           { path: '/editor/:cvId', element: <EditorPage /> },
+          { path: '/cover-letter/:coverLetterId', element: <CoverLetterEditorPage /> },
         ],
       },
     ],

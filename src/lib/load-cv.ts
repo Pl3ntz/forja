@@ -8,6 +8,7 @@ import {
   cvProjectItems,
   cvSkillCategories,
   cvLanguageItems,
+  cvCertificationItems,
 } from '../db/schema/index.js'
 import { cvRowsToCvData } from './cv-to-data.js'
 
@@ -23,7 +24,7 @@ export async function loadCvById(
 
   if (!cv) return null
 
-  const [education, experience, projects, skills, languages] =
+  const [education, experience, projects, skills, languages, certifications] =
     await Promise.all([
       db
         .select()
@@ -50,9 +51,14 @@ export async function loadCvById(
         .from(cvLanguageItems)
         .where(eq(cvLanguageItems.cvId, cv.id))
         .orderBy(asc(cvLanguageItems.orderIndex)),
+      db
+        .select()
+        .from(cvCertificationItems)
+        .where(eq(cvCertificationItems.cvId, cv.id))
+        .orderBy(asc(cvCertificationItems.orderIndex)),
     ])
 
-  return cvRowsToCvData(cv, education, experience, projects, skills, languages)
+  return cvRowsToCvData(cv, education, experience, projects, skills, languages, certifications)
 }
 
 export async function getUserCvs(

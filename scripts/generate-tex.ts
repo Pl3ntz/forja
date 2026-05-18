@@ -4,7 +4,15 @@ import { parse } from 'yaml'
 import ejs from 'ejs'
 import { latexEscape } from '../src/lib/latex-escape.js'
 import type { CvData } from '../src/types/cv.js'
-import { getTemplate, isValidTemplateId, DEFAULT_TEMPLATE_ID } from '../src/lib/templates.js'
+import type { CoverLetterData } from '../src/types/cover-letter.js'
+import {
+  getTemplate,
+  isValidTemplateId,
+  DEFAULT_TEMPLATE_ID,
+  getCoverLetterTemplate,
+  isValidCoverLetterTemplateId,
+  DEFAULT_COVER_LETTER_TEMPLATE_ID,
+} from '../src/lib/templates.js'
 
 const BABEL_MAP: Record<string, string> = {
   pt: 'brazilian',
@@ -25,6 +33,29 @@ export function generateTexFromData(cvData: CvData): string {
     ...cvData,
     meta: cvData.meta,
     customSections: cvData.customSections ?? [],
+    babelLang,
+    e: latexEscape,
+  })
+}
+
+export function generateTexFromCoverLetter(data: CoverLetterData): string {
+  const templateId = isValidCoverLetterTemplateId(data.templateId)
+    ? data.templateId
+    : DEFAULT_COVER_LETTER_TEMPLATE_ID
+  const config = getCoverLetterTemplate(templateId)
+  const templatePath = resolve(process.cwd(), config.latexDir, 'template.tex.ejs')
+  const template = readFileSync(templatePath, 'utf-8')
+
+  const babelLang = BABEL_MAP[data.locale] ?? 'english'
+
+  return ejs.render(template, {
+    sender: data.sender,
+    recipient: data.recipient,
+    letterDate: data.letterDate,
+    body: data.body,
+    closingPhrase: data.closingPhrase,
+    signature: data.signature,
+    customLatex: data.customLatex,
     babelLang,
     e: latexEscape,
   })

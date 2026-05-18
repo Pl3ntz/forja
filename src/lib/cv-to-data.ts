@@ -1,5 +1,6 @@
 import type { CvData } from '../types/cv.js'
 import type { Locale } from './locales.js'
+import { DEFAULT_CV_TEMPLATE_ID } from './templates.js'
 
 interface CvRow {
   readonly id: string
@@ -13,6 +14,7 @@ interface CvRow {
   readonly email: string
   readonly linkedin: string
   readonly github: string
+  readonly headerTitle: string
   readonly summaryTitle: string
   readonly summaryText: string
   readonly educationTitle: string
@@ -20,6 +22,7 @@ interface CvRow {
   readonly projectsTitle: string
   readonly skillsTitle: string
   readonly languagesTitle: string
+  readonly certificationsTitle?: string
   readonly sectionOrder: string | null
   readonly customSections: string | null
   readonly customLatex: string | null
@@ -39,6 +42,14 @@ interface ExperienceRow {
   readonly date: string
   readonly location: string
   readonly highlights: string[] | null
+  readonly intro: string
+  readonly skills: string
+}
+
+interface CertificationRow {
+  readonly name: string
+  readonly issuer: string
+  readonly year: string
 }
 
 interface ProjectRow {
@@ -65,6 +76,7 @@ export function cvRowsToCvData(
   projects: readonly ProjectRow[],
   skills: readonly SkillRow[],
   languages: readonly LanguageRow[],
+  certifications: readonly CertificationRow[] = [],
 ): CvData {
   let sectionOrder: string[] | undefined
   if (cv.sectionOrder) {
@@ -88,7 +100,7 @@ export function cvRowsToCvData(
     meta: {
       locale: cv.locale,
       pdfFilename: cv.pdfFilename ?? `cv-${cv.locale}`,
-      templateId: cv.templateId ?? 'jake',
+      templateId: cv.templateId ?? DEFAULT_CV_TEMPLATE_ID,
       sectionOrder,
     },
     header: {
@@ -98,6 +110,7 @@ export function cvRowsToCvData(
       email: cv.email,
       linkedin: cv.linkedin,
       github: cv.github,
+      title: cv.headerTitle,
     },
     summary: {
       title: cv.summaryTitle,
@@ -121,6 +134,8 @@ export function cvRowsToCvData(
         date: e.date,
         location: e.location,
         highlights: e.highlights ?? [],
+        intro: e.intro,
+        skills: e.skills,
       })),
     },
     projects: {
@@ -146,6 +161,16 @@ export function cvRowsToCvData(
         level: l.level,
       })),
     },
+    certifications: certifications.length > 0
+      ? {
+          title: cv.certificationsTitle ?? 'Certifications',
+          items: certifications.map((c) => ({
+            name: c.name,
+            issuer: c.issuer,
+            year: c.year,
+          })),
+        }
+      : undefined,
     customSections,
   }
 }
@@ -159,6 +184,7 @@ export function cvInputToCvData(
     readonly projects: CvData['projects']
     readonly skills: CvData['skills']
     readonly languages: CvData['languages']
+    readonly certifications?: CvData['certifications']
     readonly templateId?: string
     readonly sectionOrder?: readonly string[]
     readonly customSections?: readonly { readonly id: string; readonly title: string; readonly items: readonly { readonly text: string }[] }[]
@@ -171,7 +197,7 @@ export function cvInputToCvData(
     meta: {
       locale,
       pdfFilename: pdfFilename ?? `cv-${locale}`,
-      templateId: templateId ?? input.templateId ?? 'jake',
+      templateId: templateId ?? input.templateId ?? DEFAULT_CV_TEMPLATE_ID,
       sectionOrder: input.sectionOrder,
     },
     header: input.header,
@@ -181,6 +207,7 @@ export function cvInputToCvData(
     projects: input.projects,
     skills: input.skills,
     languages: input.languages,
+    certifications: input.certifications,
     customSections: input.customSections,
   }
 }

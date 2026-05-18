@@ -1,0 +1,41 @@
+<% /* EJS template: CoverLetterData -> LaTeX cover letter */ -%>
+\input{preamble}
+
+\usepackage[<%-babelLang %>]{babel}
+
+\begin{document}
+
+\letterHeader{<%-e(sender.name) %>}{<%-e(sender.title) %>}{<%-e(sender.location) %>}{<%-e(sender.phone) %>}{<%-e(sender.email) %>}{<%-e(sender.linkedin) %>}
+
+\begin{center}\textsc{\Large Cover Letter}\end{center}
+\vspace{6pt}
+
+<% if (letterDate) { -%>
+\noindent <%-e(letterDate) %> \par \vspace{6pt}
+<% } -%>
+
+<% if (recipient.name || recipient.company || recipient.address) { -%>
+\noindent\begin{tabular}{l}
+<% if (recipient.name) { -%><%-e(recipient.name) %> \\
+<% } -%>
+<% if (recipient.company) { -%><%-e(recipient.company) %> \\
+<% } -%>
+<% if (recipient.address) { -%><%-e(recipient.address) %>
+<% } -%>
+\end{tabular}
+\par \vspace{6pt}
+<% } -%>
+
+\noindent <%-e(recipient.salutation) %>, \par \vspace{6pt}
+
+<% for (const p of body) { -%>
+<% if (p.label) { -%>
+\noindent \textbf{<%-e(p.label) %>:} <%-e(p.content) %> \par \vspace{6pt}
+<% } else { -%>
+\noindent <%-e(p.content) %> \par \vspace{6pt}
+<% } -%>
+<% } -%>
+
+\letterClosing{<%-e(closingPhrase) %>}{<%-e(signature) %>}
+
+\end{document}

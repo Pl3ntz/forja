@@ -33,7 +33,7 @@ export default function ExperienceForm({ data, onDataChange, labels }: Props) {
         ...data.experience,
         items: [
           ...experience.items,
-          { company: '', role: '', date: '', location: '', highlights: [] },
+          { company: '', role: '', date: '', location: '', highlights: [], intro: '', skills: '' },
         ],
       },
     })
@@ -114,6 +114,31 @@ export default function ExperienceForm({ data, onDataChange, labels }: Props) {
           <div className="mb-4">
             <label htmlFor={`exp-${index}-location`} className="block text-sm font-medium text-text-secondary mb-1">{labels.location ?? 'Local'}</label>
             <input id={`exp-${index}-location`} className={inputClass} value={item.location} onChange={(e) => updateItem(index, 'location', e.target.value)} />
+          </div>
+          <div className="mb-4">
+            <label htmlFor={`exp-${index}-intro`} className="block text-sm font-medium text-text-secondary mb-1">{labels.intro ?? 'Paragrafo introdutorio'}</label>
+            <textarea
+              id={`exp-${index}-intro`}
+              className={`${inputClass} resize-none`}
+              rows={2}
+              maxLength={2000}
+              value={item.intro ?? ''}
+              placeholder="I led a cross-functional team in the Logistics Tribe..."
+              onChange={(e) => updateItem(index, 'intro', e.target.value)}
+            />
+            <p className="text-xs text-text-muted mt-1">{labels.introHint ?? 'Usado pelo modelo Modern'}</p>
+          </div>
+          <div className="mb-4">
+            <label htmlFor={`exp-${index}-skills`} className="block text-sm font-medium text-text-secondary mb-1">{labels.skills ?? 'Linha de habilidades'}</label>
+            <input
+              id={`exp-${index}-skills`}
+              className={inputClass}
+              maxLength={500}
+              value={item.skills ?? ''}
+              placeholder="Python, Scala, Spark, AWS"
+              onChange={(e) => updateItem(index, 'skills', e.target.value)}
+            />
+            <p className="text-xs text-text-muted mt-1">{labels.skillsHint ?? 'Usado pelo modelo Modern'}</p>
           </div>
           <div className="mb-4">
             <label id={`exp-${index}-highlights-label`} className="block text-sm font-medium text-text-secondary mb-1">{labels.highlights ?? 'Principais realizações'}</label>

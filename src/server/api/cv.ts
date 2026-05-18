@@ -8,6 +8,7 @@ import {
   cvProjectItems,
   cvSkillCategories,
   cvLanguageItems,
+  cvCertificationItems,
 } from '../../db/schema/index.js'
 import { cvInputSchema, cvCreateSchema } from '../../lib/zod-schemas/cv.js'
 import { cvRowsToCvData, cvInputToCvData } from '../../lib/cv-to-data.js'
@@ -20,6 +21,7 @@ import { checkRateLimit, rateLimitResponse } from '../../lib/rate-limit.js'
 import { analyzeCvAtsScore, parseCvFromPdf, translateCvContent } from '../../lib/ai-client.js'
 import { generateTexFromData } from '../../../scripts/generate-tex.js'
 import type { Locale } from '../../lib/locales.js'
+import { DEFAULT_CV_TEMPLATE_ID } from '../../lib/templates.js'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { parse as parseYaml } from 'yaml'
@@ -35,9 +37,13 @@ function sanitizeNameForFilename(fullName: string): string {
     .join('_')
 }
 
+function sanitizePdfFilename(name: string): string {
+  return name.replace(/[^A-Za-z0-9._-]/g, '_').slice(0, 200) || 'Resume.pdf'
+}
+
 function buildPdfFilename(name: string): string {
   const sanitized = sanitizeNameForFilename(name)
-  return `${sanitized}_Resume.pdf`
+  return sanitizePdfFilename(`${sanitized}_Resume.pdf`)
 }
 
 const app = new Hono()
@@ -110,7 +116,7 @@ app.get('/sample-preview', async (c) => {
       ...parsed,
       meta: {
         ...parsed.meta,
-        templateId: parsed.meta.templateId ?? 'jake',
+        templateId: parsed.meta.templateId ?? DEFAULT_CV_TEMPLATE_ID,
         locale,
       },
     }
@@ -223,6 +229,7 @@ app.put('/:cvId', async (c) => {
           email: input.header.email,
           linkedin: input.header.linkedin,
           github: input.header.github,
+          headerTitle: input.header.title ?? '',
           summaryTitle: input.summary.title,
           summaryText: input.summary.text,
           educationTitle: input.education.title,
@@ -243,6 +250,7 @@ app.put('/:cvId', async (c) => {
         tx.delete(cvProjectItems).where(eq(cvProjectItems.cvId, cvId)),
         tx.delete(cvSkillCategories).where(eq(cvSkillCategories.cvId, cvId)),
         tx.delete(cvLanguageItems).where(eq(cvLanguageItems.cvId, cvId)),
+        tx.delete(cvCertificationItems).where(eq(cvCertificationItems.cvId, cvId)),
       ])
 
       const inserts: Promise<unknown>[] = []
@@ -266,6 +274,21 @@ app.put('/:cvId', async (c) => {
               cvId, orderIndex: i,
               company: item.company, role: item.role,
               date: item.date, location: item.location, highlights: item.highlights,
+              intro: item.intro ?? '',
+              skills: item.skills ?? '',
+            })),
+          ),
+        )
+      }
+
+      if (input.certifications && input.certifications.items.length > 0) {
+        inserts.push(
+          tx.insert(cvCertificationItems).values(
+            input.certifications.items.map((item, i) => ({
+              cvId, orderIndex: i,
+              name: item.name,
+              issuer: item.issuer ?? '',
+              year: item.year ?? '',
             })),
           ),
         )
@@ -373,7 +396,7 @@ app.post('/:cvId/preview', async (c) => {
         ...sampleParsed,
         meta: {
           ...sampleParsed.meta,
-          templateId: sampleParsed.meta.templateId ?? 'jake',
+          templateId: sampleParsed.meta.templateId ?? DEFAULT_CV_TEMPLATE_ID,
           locale,
         },
       }
@@ -688,13 +711,14 @@ app.post('/import-pdf', async (c) => {
         userId,
         locale,
         title,
-        templateId: cvData.templateId ?? 'jake',
+        templateId: cvData.templateId ?? DEFAULT_CV_TEMPLATE_ID,
         name: cvData.header.name,
         location: cvData.header.location,
         phone: cvData.header.phone,
         email: cvData.header.email,
         linkedin: cvData.header.linkedin,
         github: cvData.header.github,
+        headerTitle: cvData.header.title ?? '',
         summaryTitle: cvData.summary.title || defaults.summary.title,
         summaryText: cvData.summary.text,
         educationTitle: cvData.education.title || defaults.education.title,
@@ -726,6 +750,8 @@ app.post('/import-pdf', async (c) => {
             cvId, orderIndex: i,
             company: item.company, role: item.role,
             date: item.date, location: item.location, highlights: item.highlights,
+            intro: item.intro ?? '',
+            skills: item.skills ?? '',
           })),
         ),
       )
@@ -754,6 +780,18 @@ app.post('/import-pdf', async (c) => {
         db.insert(cvLanguageItems).values(
           cvData.languages.items.map((lang, i) => ({
             cvId, orderIndex: i, name: lang.name, level: lang.level,
+          })),
+        ),
+      )
+    }
+    if (cvData.certifications && cvData.certifications.items.length > 0) {
+      inserts.push(
+        db.insert(cvCertificationItems).values(
+          cvData.certifications.items.map((item, i) => ({
+            cvId, orderIndex: i,
+            name: item.name,
+            issuer: item.issuer ?? '',
+            year: item.year ?? '',
           })),
         ),
       )
@@ -809,20 +847,21 @@ app.post('/:cvId/clone-translate', async (c) => {
     return c.json({ error: 'CV não encontrado' }, 404)
   }
 
-  const [education, experience, projects, skills, languages] =
+  const [education, experience, projects, skills, languages, certifications] =
     await Promise.all([
       db.select().from(cvEducationItems).where(eq(cvEducationItems.cvId, cv.id)).orderBy(asc(cvEducationItems.orderIndex)),
       db.select().from(cvExperienceItems).where(eq(cvExperienceItems.cvId, cv.id)).orderBy(asc(cvExperienceItems.orderIndex)),
       db.select().from(cvProjectItems).where(eq(cvProjectItems.cvId, cv.id)).orderBy(asc(cvProjectItems.orderIndex)),
       db.select().from(cvSkillCategories).where(eq(cvSkillCategories.cvId, cv.id)).orderBy(asc(cvSkillCategories.orderIndex)),
       db.select().from(cvLanguageItems).where(eq(cvLanguageItems.cvId, cv.id)).orderBy(asc(cvLanguageItems.orderIndex)),
+      db.select().from(cvCertificationItems).where(eq(cvCertificationItems.cvId, cv.id)).orderBy(asc(cvCertificationItems.orderIndex)),
     ])
 
-  const cvData = cvRowsToCvData(cv, education, experience, projects, skills, languages)
+  const cvData = cvRowsToCvData(cv, education, experience, projects, skills, languages, certifications)
 
   // Build CvInput from original data (deep copy to satisfy mutable type)
   const originalInput: import('../../lib/zod-schemas/cv.js').CvInput = {
-    templateId: (cvData.meta.templateId ?? 'jake') as 'jake',
+    templateId: (cvData.meta.templateId ?? DEFAULT_CV_TEMPLATE_ID) as import('../../lib/templates.js').CvTemplateId,
     locale: cvData.meta.locale as 'pt' | 'en',
     sectionOrder: cvData.meta.sectionOrder ? [...cvData.meta.sectionOrder] : undefined,
     customSections: cvData.customSections ? cvData.customSections.map(cs => ({ id: cs.id, title: cs.title, items: cs.items.map(i => ({ text: i.text })) })) : undefined,
@@ -833,6 +872,9 @@ app.post('/:cvId/clone-translate', async (c) => {
     projects: { title: cvData.projects.title, items: cvData.projects.items.map(i => ({ ...i, highlights: [...i.highlights] })) },
     skills: { title: cvData.skills.title, categories: cvData.skills.categories.map(c => ({ ...c })) },
     languages: { title: cvData.languages.title, items: cvData.languages.items.map(l => ({ ...l })) },
+    certifications: cvData.certifications
+      ? { title: cvData.certifications.title, items: cvData.certifications.items.map(item => ({ ...item })) }
+      : undefined,
   }
 
   // Try translation via AI, fallback to copy with locale section titles
@@ -867,13 +909,14 @@ app.post('/:cvId/clone-translate', async (c) => {
         userId,
         locale: targetLocale,
         title,
-        templateId: translatedInput.templateId ?? 'jake',
+        templateId: translatedInput.templateId ?? DEFAULT_CV_TEMPLATE_ID,
         name: translatedInput.header.name,
         location: translatedInput.header.location,
         phone: translatedInput.header.phone,
         email: translatedInput.header.email,
         linkedin: translatedInput.header.linkedin,
         github: translatedInput.header.github,
+        headerTitle: translatedInput.header.title ?? '',
         summaryTitle: translatedInput.summary.title,
         summaryText: translatedInput.summary.text,
         educationTitle: translatedInput.education.title,
@@ -907,6 +950,8 @@ app.post('/:cvId/clone-translate', async (c) => {
             cvId: newCvId, orderIndex: i,
             company: item.company, role: item.role,
             date: item.date, location: item.location, highlights: item.highlights,
+            intro: item.intro ?? '',
+            skills: item.skills ?? '',
           })),
         ),
       )
@@ -935,6 +980,18 @@ app.post('/:cvId/clone-translate', async (c) => {
         db.insert(cvLanguageItems).values(
           translatedInput.languages.items.map((lang, i) => ({
             cvId: newCvId, orderIndex: i, name: lang.name, level: lang.level,
+          })),
+        ),
+      )
+    }
+    if (translatedInput.certifications && translatedInput.certifications.items.length > 0) {
+      inserts.push(
+        db.insert(cvCertificationItems).values(
+          translatedInput.certifications.items.map((item, i) => ({
+            cvId: newCvId, orderIndex: i,
+            name: item.name,
+            issuer: item.issuer ?? '',
+            year: item.year ?? '',
           })),
         ),
       )

@@ -5,6 +5,8 @@ import type { AtsScoreResponse } from '@/lib/zod-schemas/ats-score.js'
 import { getTranslations } from '@/lib/i18n/index.js'
 import { getFormDefaults } from '@/lib/form-defaults.js'
 import type { Locale } from '@/lib/locales.js'
+import { CV_TEMPLATE_IDS, CV_TEMPLATES } from '@/lib/templates.js'
+import type { CvTemplateId } from '@/lib/templates.js'
 import FeedbackModal from './FeedbackModal.js'
 import HeaderForm from './HeaderForm.js'
 import SummaryForm from './SummaryForm.js'
@@ -13,8 +15,10 @@ import ExperienceForm from './ExperienceForm.js'
 import ProjectsForm from './ProjectsForm.js'
 import SkillsForm from './SkillsForm.js'
 import LanguagesForm from './LanguagesForm.js'
+import CertificationsForm from './CertificationsForm.js'
 import CustomSectionForm from './CustomSectionForm.js'
 import UserMenu from './UserMenu.js'
+import { useModalA11y } from '../hooks/useModalA11y.js'
 
 interface UserInfo {
   readonly name: string
@@ -33,11 +37,11 @@ interface Props {
   user: UserInfo
 }
 
-type BuiltInSectionKey = 'summary' | 'education' | 'experience' | 'projects' | 'skills' | 'languages'
+type BuiltInSectionKey = 'summary' | 'education' | 'experience' | 'projects' | 'skills' | 'languages' | 'certifications'
 type Tab = 'header' | string
 
-const ALL_BUILTIN_SECTIONS: BuiltInSectionKey[] = ['summary', 'education', 'experience', 'projects', 'skills', 'languages']
-const DEFAULT_SECTION_ORDER: string[] = ['summary', 'education', 'experience', 'projects', 'skills', 'languages']
+const ALL_BUILTIN_SECTIONS: BuiltInSectionKey[] = ['summary', 'education', 'experience', 'projects', 'skills', 'languages', 'certifications']
+const DEFAULT_SECTION_ORDER: string[] = ['summary', 'education', 'experience', 'projects', 'skills', 'languages', 'certifications']
 
 const BUILTIN_TAB_LABELS: Record<string, string> = {
   header: 'Dados',
@@ -47,6 +51,7 @@ const BUILTIN_TAB_LABELS: Record<string, string> = {
   projects: 'Projetos',
   skills: 'Habilidades',
   languages: 'Idiomas',
+  certifications: 'Certificações',
 }
 
 function getScoreColor(score: number): string {
@@ -175,6 +180,8 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
   const [ghostVisible, setGhostVisible] = useState(true)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const closeLatexModal = useCallback(() => setLatexModalOpen(false), [])
+  const latexModalRef = useModalA11y(latexModalOpen, closeLatexModal)
 
   // Derive section order from data (with runtime safety)
   const rawOrder = data.sectionOrder as string[] | undefined
@@ -185,6 +192,7 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
 
   // Helper to get tab label (built-in or custom section title)
   const getTabLabel = (tab: Tab): string => {
+    if (tab === 'certifications') return data.certifications?.title || BUILTIN_TAB_LABELS.certifications
     if (BUILTIN_TAB_LABELS[tab]) return BUILTIN_TAB_LABELS[tab]
     const cs = data.customSections?.find(s => s.id === tab)
     return cs?.title || 'Seção personalizada'
@@ -548,6 +556,16 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
       case 'projects': return <ProjectsForm data={data} onDataChange={setData} labels={currentLabels.projects ?? {}} />
       case 'skills': return <SkillsForm data={data} onDataChange={setData} labels={currentLabels.skills ?? {}} />
       case 'languages': return <LanguagesForm data={data} onDataChange={setData} labels={currentLabels.languages ?? {}} />
+      case 'certifications': {
+        const certData = data.certifications ?? { title: 'Certificações', items: [] }
+        return (
+          <CertificationsForm
+            data={certData}
+            onChange={(updated) => setData({ ...data, certifications: updated })}
+            labels={currentLabels.certifications ?? {}}
+          />
+        )
+      }
     }
   }
 
@@ -710,6 +728,19 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
         <div className="flex items-center gap-2 ml-auto flex-shrink-0">
           <select
             className="bg-forge-800 border border-forge-500 rounded-lg text-xs text-text-primary px-2 py-1 cursor-pointer"
+            value={data.templateId ?? 'jake'}
+            aria-label={currentLabels.editor?.template ?? 'Modelo'}
+            title={currentLabels.editor?.template ?? 'Modelo'}
+            onChange={(e) => {
+              setData({ ...data, templateId: e.target.value as CvTemplateId })
+            }}
+          >
+            {CV_TEMPLATE_IDS.map(id => (
+              <option key={id} value={id}>{CV_TEMPLATES[id].name}</option>
+            ))}
+          </select>
+          <select
+            className="bg-forge-800 border border-forge-500 rounded-lg text-xs text-text-primary px-2 py-1 cursor-pointer"
             value={currentLocale}
             onChange={(e) => {
               const newLocale = e.target.value as Locale
@@ -724,6 +755,9 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
                 projects: { ...prev.projects, title: defaults.projects.title },
                 skills: { ...prev.skills, title: defaults.skills.title },
                 languages: { ...prev.languages, title: defaults.languages.title },
+                certifications: prev.certifications
+                  ? { ...prev.certifications, title: defaults.certifications?.title ?? prev.certifications.title }
+                  : prev.certifications,
               }))
             }}
           >
@@ -926,6 +960,7 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
             exit={{ opacity: 0 }}
           >
             <motion.div
+              ref={latexModalRef}
               className="bg-forge-850 border border-forge-600 rounded-xl shadow-2xl w-[95vw] h-[90vh] flex flex-col"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -971,7 +1006,7 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
                   <button
                     type="button"
                     className="w-8 h-8 flex items-center justify-center border border-forge-500 rounded-lg text-text-muted hover:bg-forge-700 hover:text-text-primary transition-colors text-sm cursor-pointer"
-                    onClick={() => setLatexModalOpen(false)}
+                    onClick={closeLatexModal}
                     aria-label="Fechar"
                   >
                     X
@@ -992,6 +1027,7 @@ export default function CvEditorForm({ initialData, cvId, locale, labels, locale
                     value={latexSource}
                     onChange={(e) => setLatexSource(e.target.value)}
                     spellCheck={false}
+                    aria-label="Código LaTeX do currículo"
                   />
                 )}
               </div>

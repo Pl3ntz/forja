@@ -1,0 +1,148 @@
+<% /* EJS template: YAML data -> LaTeX Modern CV */ -%>
+\input{preamble}
+
+\usepackage[<%-babelLang %>]{babel}
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+<% if (header.name) { -%>
+    \textbf{\Huge \scshape <%-e(header.name) %>} \\ \vspace{1pt}
+<% } -%>
+<% if (header.title) { -%>
+    \large{\textit{<%-e(header.title) %>}} \\ \vspace{1pt}
+<% } -%>
+<% if (header.location) { -%>
+    \small <%-e(header.location) %> \\
+<% } -%>
+<% const contactParts = [] -%>
+<% if (header.phone) { contactParts.push(e(header.phone)) } -%>
+<% function safeUrl(url) { return url.replace(/[{}\\#%~^]/g, '') } -%>
+<% if (header.email) { contactParts.push('\\href{mailto:' + safeUrl(header.email) + '}{\\underline{' + e(header.email) + '}}') } -%>
+<% if (header.linkedin) { contactParts.push('\\href{https://' + safeUrl(header.linkedin) + '}{\\underline{' + e(header.linkedin) + '}}') } -%>
+<% if (header.github) { contactParts.push('\\href{https://' + safeUrl(header.github) + '}{\\underline{' + e(header.github) + '}}') } -%>
+<% if (contactParts.length > 0) { -%>
+    \small <%-contactParts.join(' $|$ ') %>
+<% } -%>
+\end{center}
+
+<% const order = (meta && meta.sectionOrder) || ['summary','education','experience','projects','certifications','skills','languages'] -%>
+<% for (const s of order) { -%>
+<% if (s === 'summary' && summary.text) { -%>
+%-----------SUMMARY-----------
+\section{<%-e(summary.title) %>}
+\small{<%-e(summary.text) %>}
+
+<% } -%>
+<% if (s === 'education' && education.items.length > 0) { -%>
+%-----------EDUCATION-----------
+\section{<%-e(education.title) %>}
+  \resumeSubHeadingListStart
+<% for (const item of education.items) { -%>
+    \resumeSubheading
+      {<%-e(item.institution) %>}{<%-e(item.date) %>}
+      {<%-e(item.degree) %>}{<%-e(item.location) %>}
+<% if (item.highlights.length > 0) { -%>
+      \resumeItemListStart
+<% for (const h of item.highlights) { -%>
+        \resumeItem{<%-e(h) %>}
+<% } -%>
+      \resumeItemListEnd
+<% } -%>
+<% } -%>
+  \resumeSubHeadingListEnd
+
+<% } -%>
+<% if (s === 'experience' && experience.items.length > 0) { -%>
+%-----------EXPERIENCE-----------
+\section{<%-e(experience.title) %>}
+  \resumeSubHeadingListStart
+<% for (const item of experience.items) { -%>
+    \resumeSubheading
+      {<%-e(item.company) %>}{<%-e(item.date) %>}
+      {<%-e(item.role) %>}{<%-e(item.location) %>}
+<% if (item.intro) { -%>
+      \resumeIntro{<%-e(item.intro) %>}
+<% } -%>
+<% if (item.highlights.length > 0) { -%>
+      \resumeItemListStart
+<% for (const h of item.highlights) { -%>
+        \resumeItem{<%-e(h) %>}
+<% } -%>
+      \resumeItemListEnd
+<% } -%>
+<% if (item.skills) { -%>
+      \resumeSkillsLine{<%-e(item.skills) %>}
+<% } -%>
+<% } -%>
+  \resumeSubHeadingListEnd
+
+<% } -%>
+<% if (s === 'projects' && projects.items.length > 0) { -%>
+%-----------PROJECTS-----------
+\section{<%-e(projects.title) %>}
+    \resumeSubHeadingListStart
+<% for (const item of projects.items) { -%>
+      \resumeProjectHeading
+          {\textbf{<%-e(item.name) %>} $|$ \emph{<%-e(item.tech) %>}}{<%-e(item.date) %>}
+<% if (item.highlights.length > 0) { -%>
+          \resumeItemListStart
+<% for (const h of item.highlights) { -%>
+            \resumeItem{<%-e(h) %>}
+<% } -%>
+          \resumeItemListEnd
+<% } -%>
+<% } -%>
+    \resumeSubHeadingListEnd
+
+<% } -%>
+<% if (s === 'certifications' && certifications && certifications.items.length > 0) { -%>
+%-----------CERTIFICATIONS-----------
+\section{<%-e(certifications.title) %>}
+  \resumeItemListStart
+<% for (const item of certifications.items) { -%>
+    \resumeCertification{<%-e(item.name) %>}{<%-e(item.issuer || '') %>}{<%-e(item.year || '') %>}
+<% } -%>
+  \resumeItemListEnd
+
+<% } -%>
+<% if (s === 'skills' && skills.categories.length > 0) { -%>
+%-----------SKILLS-----------
+\section{<%-e(skills.title) %>}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+<% for (const cat of skills.categories) { -%>
+     \textbf{<%-e(cat.name) %>}{: <%-e(cat.values) %>} \\
+<% } -%>
+    }}
+ \end{itemize}
+
+<% } -%>
+<% if (s === 'languages' && languages.items.length > 0) { -%>
+%-----------LANGUAGES-----------
+\section{<%-e(languages.title) %>}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+<% for (const lang of languages.items) { -%>
+     \textbf{<%-e(lang.name) %>}: <%-e(lang.level) %><%-lang !== languages.items[languages.items.length - 1] ? ' \\\\' : '' %>
+<% } -%>
+    }}
+ \end{itemize}
+
+<% } -%>
+<% if (s.startsWith('custom-') && customSections) { -%>
+<%   const cs = customSections.find(c => c.id === s) -%>
+<%   if (cs && cs.items.length > 0) { -%>
+%-----------CUSTOM SECTION-----------
+\section{<%-e(cs.title) %>}
+  \resumeItemListStart
+<%     for (const item of cs.items) { -%>
+    \resumeItem{<%-e(item.text) %>}
+<%     } -%>
+  \resumeItemListEnd
+
+<%   } -%>
+<% } -%>
+<% } -%>
+\end{document}

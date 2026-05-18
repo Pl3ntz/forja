@@ -6,6 +6,8 @@ export const pt: Record<string, Record<string, string>> = {
     email: 'Email',
     linkedin: 'LinkedIn',
     github: 'GitHub',
+    title: 'Titulo (subtitulo)',
+    titleHint: "Usado pelo modelo Modern — exibicao de multiplos cargos como 'Engenheiro de Dados | Especialista Cloud'",
   },
   summary: {
     sectionTitle: 'Titulo da Secao',
@@ -30,6 +32,10 @@ export const pt: Record<string, Record<string, string>> = {
     highlights: 'Destaques',
     addHighlight: 'Adicionar Destaque',
     addItem: 'Adicionar Experiencia',
+    intro: 'Paragrafo introdutorio',
+    introHint: 'Usado pelo modelo Modern',
+    skills: 'Linha de habilidades',
+    skillsHint: 'Usado pelo modelo Modern',
   },
   projects: {
     sectionTitle: 'Titulo da Secao',
@@ -51,5 +57,16 @@ export const pt: Record<string, Record<string, string>> = {
     languageName: 'Idioma',
     level: 'Nivel',
     addItem: 'Adicionar Idioma',
+  },
+  certifications: {
+    sectionTitle: 'Titulo da Secao',
+    name: 'Nome da Certificacao',
+    issuer: 'Emissor (opcional)',
+    year: 'Ano (opcional)',
+    addItem: 'Adicionar Certificacao',
+    empty: 'Nenhuma certificacao ainda — adicione uma para comecar.',
+  },
+  editor: {
+    template: 'Modelo',
   },
 }

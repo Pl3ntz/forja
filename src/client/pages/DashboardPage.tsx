@@ -3,8 +3,9 @@ import { useNavigate, Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth.js'
 import { LOCALE_LABELS, type Locale } from '@/lib/locales.js'
-import { TEMPLATES, isValidTemplateId } from '@/lib/templates.js'
+import { TEMPLATES, isValidTemplateId, DEFAULT_CV_TEMPLATE_ID } from '@/lib/templates.js'
 import FeedbackCard from '../components/FeedbackCard.js'
+import { useCoverLetters } from '../hooks/useCoverLetters.js'
 
 interface CvListItem {
   id: string
@@ -35,6 +36,16 @@ export default function DashboardPage() {
     try { return localStorage.getItem('cv_feedback_done') === '1' } catch { return false }
   })
 
+  // Cover letter state
+  const { items: coverLetters, loading: clLoading, create: createCoverLetter, remove: removeCoverLetter } = useCoverLetters()
+  const [clOpenMenuId, setClOpenMenuId] = useState<string | null>(null)
+  const [clDeletingId, setClDeletingId] = useState<string | null>(null)
+  const [showNewClForm, setShowNewClForm] = useState(false)
+  const [clCreating, setClCreating] = useState(false)
+  const [clFormLocale, setClFormLocale] = useState<'pt' | 'en'>('pt')
+  const [clFormTitle, setClFormTitle] = useState('')
+  const [clFormCvId, setClFormCvId] = useState<string>('')
+
   useEffect(() => {
     fetch('/api/cv')
       .then((res) => res.json())
@@ -50,8 +61,18 @@ export default function DashboardPage() {
   }, [])
 
   useEffect(() => {
-    const handleClick = () => setOpenMenuId(null)
-    const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpenMenuId(null) }
+    const handleClick = () => {
+      setOpenMenuId(null)
+      setClOpenMenuId(null)
+      setShowNewClForm(false)
+    }
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpenMenuId(null)
+        setClOpenMenuId(null)
+        setShowNewClForm(false)
+      }
+    }
     document.addEventListener('click', handleClick)
     document.addEventListener('keydown', handleEscape)
     return () => {
@@ -152,7 +173,7 @@ export default function DashboardPage() {
           locale: body.locale,
           name: prev.find(c => c.id === cvId)?.name ?? '',
           updatedAt: new Date().toISOString(),
-          templateId: prev.find(c => c.id === cvId)?.templateId ?? 'jake',
+          templateId: prev.find(c => c.id === cvId)?.templateId ?? DEFAULT_CV_TEMPLATE_ID,
         }, ...prev])
         const langName = targetLocale === 'pt' ? 'Português' : 'Inglês'
         showToast(
@@ -168,6 +189,41 @@ export default function DashboardPage() {
       showToast('Falha ao clonar currículo. Verifique sua conexão.', 'error')
     } finally {
       setCloningId(null)
+    }
+  }
+
+  const handleCreateCoverLetter = async () => {
+    setClCreating(true)
+    try {
+      const id = await createCoverLetter({
+        locale: clFormLocale,
+        title: clFormTitle.trim() || undefined,
+        cvId: clFormCvId || null,
+      })
+      setShowNewClForm(false)
+      setClFormTitle('')
+      setClFormCvId('')
+      navigate(`/cover-letter/${id}`)
+    } catch {
+      showToast('Falha ao criar carta de apresentação', 'error')
+    } finally {
+      setClCreating(false)
+    }
+  }
+
+  const handleDeleteCoverLetter = async (id: string) => {
+    const confirmed = confirm('Tem certeza que deseja excluir esta carta de apresentação? Esta ação não pode ser desfeita.')
+    if (!confirmed) return
+
+    setClDeletingId(id)
+    setClOpenMenuId(null)
+    try {
+      await removeCoverLetter(id)
+      showToast('Carta de apresentação excluída', 'success')
+    } catch {
+      showToast('Falha ao excluir carta de apresentação', 'error')
+    } finally {
+      setClDeletingId(null)
     }
   }
 
@@ -424,6 +480,175 @@ export default function DashboardPage() {
           })}
         </ul>
       )}
+
+      {/* ── Cover Letters section ── */}
+      <div className="mt-10">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-text-primary">Cartas de Apresentação</h2>
+          <div className="relative">
+            <button
+              type="button"
+              className="px-4 py-2.5 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all shadow-lg shadow-ember-500/20 disabled:opacity-50"
+              onClick={() => setShowNewClForm(!showNewClForm)}
+              disabled={clCreating}
+            >
+              {clCreating ? 'Criando...' : 'Nova Carta'}
+            </button>
+            {showNewClForm && (
+              <div
+                className="absolute right-0 top-full mt-2 w-72 bg-forge-800 border border-forge-600 rounded-xl shadow-xl shadow-black/30 z-20 p-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="mb-3">
+                  <label htmlFor="cl-title" className="block text-xs font-medium text-text-muted mb-1.5">Título (opcional)</label>
+                  <input
+                    id="cl-title"
+                    type="text"
+                    placeholder="Sem título"
+                    className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:border-ember-500 focus:outline-none"
+                    value={clFormTitle}
+                    onChange={(e) => setClFormTitle(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="cl-locale" className="block text-xs font-medium text-text-muted mb-1.5">Idioma</label>
+                  <select
+                    id="cl-locale"
+                    className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary focus:border-ember-500 focus:outline-none"
+                    value={clFormLocale}
+                    onChange={(e) => setClFormLocale(e.target.value as 'pt' | 'en')}
+                  >
+                    <option value="pt">Português</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
+                {cvList.length > 0 && (
+                  <div className="mb-3">
+                    <label htmlFor="cl-cv" className="block text-xs font-medium text-text-muted mb-1.5">Vincular a um currículo (opcional)</label>
+                    <select
+                      id="cl-cv"
+                      className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary focus:border-ember-500 focus:outline-none"
+                      value={clFormCvId}
+                      onChange={(e) => setClFormCvId(e.target.value)}
+                    >
+                      <option value="">Nenhum</option>
+                      {cvList.map((cv) => (
+                        <option key={cv.id} value={cv.id}>
+                          {cv.name || cv.title || 'Sem título'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className="w-full px-3 py-2 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all disabled:opacity-50"
+                  onClick={handleCreateCoverLetter}
+                  disabled={clCreating}
+                >
+                  {clCreating ? 'Criando...' : 'Criar'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {clLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="w-6 h-6 border-2 border-forge-600 border-t-ember-500 rounded-full animate-spin" />
+          </div>
+        ) : coverLetters.length === 0 ? (
+          <div className="text-center py-12 bg-forge-800 border border-forge-600 rounded-xl">
+            <p className="text-text-muted mb-3">Você ainda não criou nenhuma carta de apresentação.</p>
+            <button
+              type="button"
+              className="px-4 py-2.5 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all shadow-lg shadow-ember-500/20"
+              onClick={() => setShowNewClForm(true)}
+            >
+              Criar Nova Carta
+            </button>
+          </div>
+        ) : (
+          <ul className="space-y-2" role="list">
+            {coverLetters.map((cl) => {
+              const displayTitle = cl.title || 'Sem título'
+              const localeBadge = cl.locale === 'pt' ? 'PT' : 'EN'
+              const linkedCv = cl.cvId ? cvList.find((cv) => cv.id === cl.cvId) : null
+              const createdAt = new Date(cl.createdAt)
+              const now = Date.now()
+              const diffMs = now - createdAt.getTime()
+              const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+              const relativeDate =
+                diffDays === 0
+                  ? 'Hoje'
+                  : diffDays === 1
+                    ? '1 dia atrás'
+                    : diffDays < 30
+                      ? `${diffDays} dias atrás`
+                      : createdAt.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })
+
+              return (
+                <li
+                  key={cl.id}
+                  className="group bg-forge-800 border border-forge-600 rounded-xl hover:border-molten-500/30 transition-all duration-200 cursor-pointer"
+                  onClick={() => navigate(`/cover-letter/${cl.id}`)}
+                >
+                  <div className="flex items-center px-5 py-4">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <span className="font-semibold text-sm text-text-primary truncate">{displayTitle}</span>
+                      <span className="flex-shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-molten-500/10 text-molten-400 border border-molten-500/20 leading-none">{localeBadge}</span>
+                      {linkedCv && (
+                        <span className="flex-shrink-0 text-xs text-text-muted truncate max-w-[160px]">
+                          Vinculado: {linkedCv.name || linkedCv.title || 'Sem título'}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-text-muted whitespace-nowrap mr-3 flex-shrink-0">
+                      {relativeDate}
+                    </span>
+                    <div className="relative flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        className="w-10 h-10 flex items-center justify-center border border-forge-500 rounded-lg bg-forge-800 text-text-muted hover:bg-forge-700 hover:text-text-primary transition-colors text-sm cursor-pointer"
+                        onClick={() => setClOpenMenuId(clOpenMenuId === cl.id ? null : cl.id)}
+                        aria-label="Mais ações"
+                        aria-haspopup="true"
+                        aria-expanded={clOpenMenuId === cl.id}
+                      >
+                        ...
+                      </button>
+                      {clOpenMenuId === cl.id && (
+                        <div
+                          className="absolute right-0 top-full mt-1 min-w-[160px] bg-forge-700 border border-forge-600 rounded-lg shadow-xl shadow-black/30 z-10 py-1"
+                          role="menu"
+                        >
+                          <button
+                            type="button"
+                            className="flex items-center w-full px-3 py-2 text-sm text-text-secondary hover:bg-forge-600 hover:text-text-primary transition-colors min-h-[44px] border-none bg-transparent cursor-pointer"
+                            role="menuitem"
+                            onClick={() => { setClOpenMenuId(null); navigate(`/cover-letter/${cl.id}`) }}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            type="button"
+                            className="flex items-center w-full px-3 py-2 text-sm text-error hover:bg-error/10 transition-colors min-h-[44px] border-none bg-transparent cursor-pointer disabled:opacity-50"
+                            role="menuitem"
+                            disabled={clDeletingId === cl.id}
+                            onClick={() => handleDeleteCoverLetter(cl.id)}
+                          >
+                            {clDeletingId === cl.id ? 'Excluindo...' : 'Excluir'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </div>
     </motion.div>
   )
 }

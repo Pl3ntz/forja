@@ -30,6 +30,18 @@ export default function HeaderForm({ data, onDataChange, labels }: Props) {
         />
       </div>
       <div className="mb-4">
+        <label htmlFor="header-title" className="block text-sm font-medium text-text-secondary mb-1">{labels.title ?? 'Titulo (subtitulo)'}</label>
+        <input
+          id="header-title"
+          className={inputClass}
+          maxLength={200}
+          value={header.title ?? ''}
+          onChange={(e) => update('title', e.target.value)}
+          placeholder="Engenheiro de Software | Especialista Cloud"
+        />
+        <p className="text-xs text-text-muted mt-1">{labels.titleHint ?? 'Usado pelo modelo Modern'}</p>
+      </div>
+      <div className="mb-4">
         <label htmlFor="header-location" className="block text-sm font-medium text-text-secondary mb-1">{labels.location ?? 'Cidade / Estado'}</label>
         <input
           id="header-location"

@@ -1,0 +1,43 @@
+@font-face {
+  font-family: 'Latin Modern Roman';
+  src: url('https://cdn.jsdelivr.net/gh/ArtifexSoftware/lm-fonts@main/fonts/otf/lmroman10-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Latin Modern Roman';
+  src: url('https://cdn.jsdelivr.net/gh/ArtifexSoftware/lm-fonts@main/fonts/otf/lmroman10-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Latin Modern Roman';
+  src: url('https://cdn.jsdelivr.net/gh/ArtifexSoftware/lm-fonts@main/fonts/otf/lmroman10-italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Latin Modern Roman', 'Computer Modern', 'CMU Serif', Georgia, 'Times New Roman', serif;
+  font-size: 11pt;
+  color: #000;
+}
+
+h1 {
+  font-size: 1.8rem;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1rem;
+  font-variant: small-caps;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}

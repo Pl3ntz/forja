@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import Groq from 'groq-sdk'
 import { z } from 'zod'
 import { cvInputSchema, type CvInput } from './zod-schemas/cv.js'
+import { DEFAULT_CV_TEMPLATE_ID } from './templates.js'
 import { atsScoreResponseSchema, type AtsScoreResponse } from './zod-schemas/ats-score.js'
 import { runRuleBasedChecks, type RuleBasedResult, type SectionScore, type ValidationIssue, type ValidationPositive } from './cv-validation/index.js'
 import type { Locale, SectionKey } from './cv-validation/types.js'
@@ -48,7 +49,7 @@ ${localeInstructions}
 - Empty or missing fields = empty string ""
 - Keep dates in the original format found in the CV
 - Do NOT invent or hallucinate information not present in the text
-- Set templateId to "jake"
+- Set templateId to "${DEFAULT_CV_TEMPLATE_ID}"
 - Extract the person's name, location, phone, email, LinkedIn URL, and GitHub URL from the header/contact section
 - If a section is not present in the CV, use an empty title and empty items array
 
