@@ -16,6 +16,84 @@ interface CvListItem {
   templateId: string
 }
 
+interface NewCoverLetterPopoverProps {
+  positionClass: string
+  title: string
+  onTitleChange: (v: string) => void
+  locale: 'pt' | 'en'
+  onLocaleChange: (v: 'pt' | 'en') => void
+  cvId: string
+  onCvIdChange: (v: string) => void
+  cvList: CvListItem[]
+  creating: boolean
+  onCreate: () => void
+}
+
+function NewCoverLetterPopover(p: NewCoverLetterPopoverProps) {
+  return (
+    <div
+      className={`${p.positionClass} w-72 bg-forge-800 border border-forge-600 rounded-xl shadow-xl shadow-black/30 z-20 p-4`}
+      onClick={(e) => e.stopPropagation()}
+      role="dialog"
+      aria-label="Nova carta de apresentação"
+    >
+      <div className="mb-3">
+        <label htmlFor="cl-title" className="block text-xs font-medium text-text-muted mb-1.5">Título (opcional)</label>
+        <input
+          id="cl-title"
+          type="text"
+          placeholder="Sem título"
+          className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:border-ember-500 focus:outline-none"
+          value={p.title}
+          onChange={(e) => p.onTitleChange(e.target.value)}
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="cl-locale" className="block text-xs font-medium text-text-muted mb-1.5">Idioma da carta</label>
+        <select
+          id="cl-locale"
+          className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary focus:border-ember-500 focus:outline-none"
+          value={p.locale}
+          onChange={(e) => p.onLocaleChange(e.target.value as 'pt' | 'en')}
+        >
+          <option value="pt">Português</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      {p.cvList.length > 0 && (
+        <div className="mb-3">
+          <label htmlFor="cl-cv" className="block text-xs font-medium text-text-muted mb-1.5">Vincular a um currículo (opcional)</label>
+          <select
+            id="cl-cv"
+            className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary focus:border-ember-500 focus:outline-none"
+            value={p.cvId}
+            onChange={(e) => p.onCvIdChange(e.target.value)}
+          >
+            <option value="">Nenhum</option>
+            {p.cvList.map((cv) => {
+              const label = cv.name || cv.title || 'Sem título'
+              const localeLabel = LOCALE_LABELS[cv.locale as Locale] ?? cv.locale.toUpperCase()
+              return (
+                <option key={cv.id} value={cv.id}>
+                  {label} — {localeLabel}
+                </option>
+              )
+            })}
+          </select>
+        </div>
+      )}
+      <button
+        type="button"
+        className="w-full px-3 py-2 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all disabled:opacity-50"
+        onClick={p.onCreate}
+        disabled={p.creating}
+      >
+        {p.creating ? 'Criando...' : 'Criar'}
+      </button>
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -40,7 +118,7 @@ export default function DashboardPage() {
   const { items: coverLetters, loading: clLoading, create: createCoverLetter, remove: removeCoverLetter } = useCoverLetters()
   const [clOpenMenuId, setClOpenMenuId] = useState<string | null>(null)
   const [clDeletingId, setClDeletingId] = useState<string | null>(null)
-  const [showNewClForm, setShowNewClForm] = useState(false)
+  const [clFormAnchor, setClFormAnchor] = useState<'header' | 'empty' | null>(null)
   const [clCreating, setClCreating] = useState(false)
   const [clFormLocale, setClFormLocale] = useState<'pt' | 'en'>('pt')
   const [clFormTitle, setClFormTitle] = useState('')
@@ -64,13 +142,13 @@ export default function DashboardPage() {
     const handleClick = () => {
       setOpenMenuId(null)
       setClOpenMenuId(null)
-      setShowNewClForm(false)
+      setClFormAnchor(null)
     }
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setOpenMenuId(null)
         setClOpenMenuId(null)
-        setShowNewClForm(false)
+        setClFormAnchor(null)
       }
     }
     document.addEventListener('click', handleClick)
@@ -200,7 +278,7 @@ export default function DashboardPage() {
         title: clFormTitle.trim() || undefined,
         cvId: clFormCvId || null,
       })
-      setShowNewClForm(false)
+      setClFormAnchor(null)
       setClFormTitle('')
       setClFormCvId('')
       navigate(`/cover-letter/${id}`)
@@ -489,66 +567,24 @@ export default function DashboardPage() {
             <button
               type="button"
               className="px-4 py-2.5 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all shadow-lg shadow-ember-500/20 disabled:opacity-50"
-              onClick={() => setShowNewClForm(!showNewClForm)}
+              onClick={() => setClFormAnchor(clFormAnchor === 'header' ? null : 'header')}
               disabled={clCreating}
             >
               {clCreating ? 'Criando...' : 'Nova Carta'}
             </button>
-            {showNewClForm && (
-              <div
-                className="absolute right-0 top-full mt-2 w-72 bg-forge-800 border border-forge-600 rounded-xl shadow-xl shadow-black/30 z-20 p-4"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="mb-3">
-                  <label htmlFor="cl-title" className="block text-xs font-medium text-text-muted mb-1.5">Título (opcional)</label>
-                  <input
-                    id="cl-title"
-                    type="text"
-                    placeholder="Sem título"
-                    className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:border-ember-500 focus:outline-none"
-                    value={clFormTitle}
-                    onChange={(e) => setClFormTitle(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="cl-locale" className="block text-xs font-medium text-text-muted mb-1.5">Idioma</label>
-                  <select
-                    id="cl-locale"
-                    className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary focus:border-ember-500 focus:outline-none"
-                    value={clFormLocale}
-                    onChange={(e) => setClFormLocale(e.target.value as 'pt' | 'en')}
-                  >
-                    <option value="pt">Português</option>
-                    <option value="en">English</option>
-                  </select>
-                </div>
-                {cvList.length > 0 && (
-                  <div className="mb-3">
-                    <label htmlFor="cl-cv" className="block text-xs font-medium text-text-muted mb-1.5">Vincular a um currículo (opcional)</label>
-                    <select
-                      id="cl-cv"
-                      className="w-full px-3 py-2 bg-forge-750 border border-forge-600 rounded-lg text-sm text-text-primary focus:border-ember-500 focus:outline-none"
-                      value={clFormCvId}
-                      onChange={(e) => setClFormCvId(e.target.value)}
-                    >
-                      <option value="">Nenhum</option>
-                      {cvList.map((cv) => (
-                        <option key={cv.id} value={cv.id}>
-                          {cv.name || cv.title || 'Sem título'}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                <button
-                  type="button"
-                  className="w-full px-3 py-2 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all disabled:opacity-50"
-                  onClick={handleCreateCoverLetter}
-                  disabled={clCreating}
-                >
-                  {clCreating ? 'Criando...' : 'Criar'}
-                </button>
-              </div>
+            {clFormAnchor === 'header' && (
+              <NewCoverLetterPopover
+                positionClass="absolute right-0 top-full mt-2"
+                title={clFormTitle}
+                onTitleChange={setClFormTitle}
+                locale={clFormLocale}
+                onLocaleChange={setClFormLocale}
+                cvId={clFormCvId}
+                onCvIdChange={setClFormCvId}
+                cvList={cvList}
+                creating={clCreating}
+                onCreate={handleCreateCoverLetter}
+              />
             )}
           </div>
         </div>
@@ -560,13 +596,29 @@ export default function DashboardPage() {
         ) : coverLetters.length === 0 ? (
           <div className="text-center py-12 bg-forge-800 border border-forge-600 rounded-xl">
             <p className="text-text-muted mb-3">Você ainda não criou nenhuma carta de apresentação.</p>
-            <button
-              type="button"
-              className="px-4 py-2.5 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all shadow-lg shadow-ember-500/20"
-              onClick={(e) => { e.stopPropagation(); setShowNewClForm(true) }}
-            >
-              Criar Nova Carta
-            </button>
+            <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="px-4 py-2.5 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all shadow-lg shadow-ember-500/20"
+                onClick={() => setClFormAnchor(clFormAnchor === 'empty' ? null : 'empty')}
+              >
+                Criar Nova Carta
+              </button>
+              {clFormAnchor === 'empty' && (
+                <NewCoverLetterPopover
+                  positionClass="absolute left-1/2 -translate-x-1/2 top-full mt-2"
+                  title={clFormTitle}
+                  onTitleChange={setClFormTitle}
+                  locale={clFormLocale}
+                  onLocaleChange={setClFormLocale}
+                  cvId={clFormCvId}
+                  onCvIdChange={setClFormCvId}
+                  cvList={cvList}
+                  creating={clCreating}
+                  onCreate={handleCreateCoverLetter}
+                />
+              )}
+            </div>
           </div>
         ) : (
           <ul className="space-y-2" role="list">
