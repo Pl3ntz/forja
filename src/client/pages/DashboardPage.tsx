@@ -485,7 +485,7 @@ export default function DashboardPage() {
       <div className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-text-primary">Cartas de Apresentação</h2>
-          <div className="relative">
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               className="px-4 py-2.5 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all shadow-lg shadow-ember-500/20 disabled:opacity-50"
@@ -563,7 +563,7 @@ export default function DashboardPage() {
             <button
               type="button"
               className="px-4 py-2.5 bg-ember-500 text-white text-sm font-medium rounded-lg hover:bg-ember-400 transition-all shadow-lg shadow-ember-500/20"
-              onClick={() => setShowNewClForm(true)}
+              onClick={(e) => { e.stopPropagation(); setShowNewClForm(true) }}
             >
               Criar Nova Carta
             </button>
