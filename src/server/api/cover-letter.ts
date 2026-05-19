@@ -63,6 +63,7 @@ app.get('/', async (c) => {
 
 // POST / — create cover letter
 app.post('/', async (c) => {
+  console.log('[cover-letter POST /] handler reached, path=', c.req.path)
   const userId = c.get('user').id
 
   let body: unknown
