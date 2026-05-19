@@ -11,6 +11,14 @@ import feedbackRoutes from './api/feedback.js'
 
 const app = new Hono()
 
+// Debug request logger (temporary, remove after diagnosis)
+app.use('/api/cover-letter/*', async (c, next) => {
+  const start = Date.now()
+  console.log(`[req] ${c.req.method} ${c.req.url}`)
+  await next()
+  console.log(`[res] ${c.req.method} ${c.req.url} → ${c.res.status} (${Date.now() - start}ms)`)
+})
+
 // Security headers
 app.use('*', async (c, next) => {
   await next()
