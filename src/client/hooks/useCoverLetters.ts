@@ -25,7 +25,7 @@ export function useCoverLetters() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/cover-letter/')
+      const res = await fetch('/api/cover-letter')
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         setError((body as { error?: string }).error ?? 'Falha ao carregar cartas de apresentação')
@@ -42,7 +42,7 @@ export function useCoverLetters() {
 
   const create = useCallback(
     async (payload: CreateCoverLetterPayload): Promise<string> => {
-      const res = await fetch('/api/cover-letter/', {
+      const res = await fetch('/api/cover-letter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

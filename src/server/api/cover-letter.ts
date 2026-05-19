@@ -34,7 +34,7 @@ function buildCoverLetterPdfFilename(name: string): string {
   return sanitizePdfFilename(`${sanitized}_Cover_Letter.pdf`)
 }
 
-const app = new Hono()
+const app = new Hono({ strict: false })
 
 // GET / — list user cover letters
 app.get('/', async (c) => {
