@@ -282,8 +282,9 @@ export default function DashboardPage() {
       setClFormTitle('')
       setClFormCvId('')
       navigate(`/cover-letter/${id}`)
-    } catch {
-      showToast('Falha ao criar carta de apresentação', 'error')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Falha ao criar carta de apresentação'
+      showToast(msg, 'error')
     } finally {
       setClCreating(false)
     }

@@ -148,6 +148,7 @@ app.post('/', async (c) => {
 
     return c.json({ id: inserted.id }, 201)
   } catch (error) {
+    console.error('[cover-letter POST] insert failed:', error)
     const message = error instanceof Error ? error.message : 'Falha ao criar carta de apresentação'
     return c.json({ error: message }, 500)
   }
